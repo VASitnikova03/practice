@@ -1,0 +1,31 @@
+app:app.o
+
+	gcc -o app app.o
+
+app.o:app.c
+
+	gcc -c app.c -l /home/viktoria/develop/06_07_23/dev1
+
+
+
+
+obj-m +=dev2.o
+
+
+PWD := $(CURDIR)
+
+ 
+
+all:
+
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
+	
+
+ 
+
+clean:
+
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+
+	
