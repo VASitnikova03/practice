@@ -1,0 +1,176 @@
+#include <linux/init.h>
+
+#include <linux/module.h>
+
+#include <linux/pci.h>
+
+
+
+#define DEV_NAME "viktoria"
+
+//#define IOCTL_GET_IOR(MAGIC_NUM, 1, unsignet long *)
+
+MODULE_LICENSE("GPL");
+
+
+
+static struct pci_device_id my_driver_id_table[] = {
+
+	{PCI_DEVICE(0x8086, 0x100e)},
+
+	{0,},
+
+};
+
+
+
+MODULE_DEVICE_TABLE(pci, my_driver_id_table);
+
+
+
+static unsigned int port_addr;
+
+static unsigned int dev_size;
+
+static char *dev_virtual;
+
+
+
+static int my_driver_probe(struct pci_dev *, const struct pci_device_id *);
+
+static void my_driver_remove(struct pci_dev *);
+
+
+
+static struct pci_driver my_pci_driver = {
+
+	.name = DEV_NAME,
+
+	.id_table = my_driver_id_table,
+
+	.probe = my_driver_probe,
+
+	.remove = my_driver_remove,
+
+};
+
+
+
+/*static struct file_operations fops =
+
+{
+
+	.open = dev_open,
+
+	.unlocked_ioctl = dev_ioctl,
+
+	.release = dev_release,
+
+}*/
+
+
+
+static int __init my_init_module(void) {
+
+	printk(KERN_INFO "Init\n");
+
+	return pci_register_driver(&my_pci_driver);
+
+}
+
+
+
+void __exit my_cleanup_module(void) {
+
+	printk(KERN_INFO "Exit\n");
+
+	pci_unregister_driver(&my_pci_driver);
+
+}
+
+
+
+int my_driver_probe(struct pci_dev *dev, const struct pci_device_id *id) {
+
+	port_addr = pci_resource_start(dev,0);
+
+	dev_size = pci_resource_len (dev,0);
+
+	dev_virtual=ioremap(port_addr,dev_size);
+
+	unsigned int i = 0;
+
+	while (i<dev_size)
+
+	{
+
+		unsigned int data = 0;
+
+		data = ioread8(&dev_virtual[i]);
+
+		if(data == 0x08) 
+
+  		{
+
+			pr_info("data: %02x:%02x:%02x:%02x:%02x:%02x\n", 
+
+			(unsigned int)data,
+
+			(unsigned int)ioread8(&dev_virtual[i+1]),
+
+			(unsigned int)ioread8(&dev_virtual[i+2]),
+
+			(unsigned int)ioread8(&dev_virtual[i+3]),
+
+			(unsigned int)ioread8(&dev_virtual[i+4]),
+
+			(unsigned int)ioread8(&dev_virtual[i+5]));
+
+			printk(KERN_INFO "i = %d\n", i);
+
+			break;
+
+		}
+
+		i++;
+
+	}
+
+	printk(KERN_INFO "Loaded\n");
+
+	return 0;
+
+}
+
+
+
+/*static long dev_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+
+{
+
+	switch(cmd) 
+
+	{
+
+		case IOCTL_GET:
+
+	}
+
+	return 0;
+
+}*/
+
+
+
+void my_driver_remove(struct pci_dev *dev) {
+
+	printk(KERN_INFO "Removed\n");
+
+}
+
+
+
+module_init(my_init_module);
+
+module_exit(my_cleanup_module);
+
