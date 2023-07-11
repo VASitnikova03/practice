@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#include <string.h>
+
+#include <sys/types.h>
+
+#include <sys/stat.h>
+
+#include <fcntl.h>
+
+#include <unistd.h>
+
+#include <sys/ioctl.h>
+
+#include "../dev1.h"
+
+ 
+
+#define IOCTL_SET0_IO(MAGIC_NUM, 0)
+
+#define IOCTL_GET_IOR(MAGIC_NUM, 1, int *)
+
+ 
+
+int main()
+
+{
+
+	int fd, cmd;
+
+       
+
+        printf("\nOpening Driver\n");
+
+        fd = open("/dev/dev1", O_RDWR);
+
+        if(fd < 0) {
+
+                printf("Cannot open device file...\n");
+
+                return 0;
+
+        }
+
+ 
+
+     
+
+        ioctl(fd, IOCTL_SET0); 
+
+ 	printf("Reading Value from Driver\n");
+
+        ioctl(fd, IOCTL_GET, int &cmd);
+
+    
+
+ 
+
+        printf("Closing Driver\n");
+
+        close(fd);
+
+}
