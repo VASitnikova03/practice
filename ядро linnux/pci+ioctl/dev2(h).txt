@@ -1,0 +1,11 @@
+#ifndef DEV1_H 
+#define DEV1_H
+#include <linux/ioctl.h> 
+#define MAGIC_NUM 0x08 //страший номер устройства
+#define IOCTL_SET0_IO(MAGIC_NUM, 0) //установка сообщения драцвера устройства
+//создаем номер команды  ioctl для передачи информации от пользователя к ядру
+#define IOCTL_GET_IOR(MAGIC_NUM, 1, int *) //получение сообщения драйвера устройства
+//имя файла устройства
+#define DEVICE_FILE_NAME "viktoria" 
+#define DEVICE_PATH "/dev/viktoria" 
+#endif 

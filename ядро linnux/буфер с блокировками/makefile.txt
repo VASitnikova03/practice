@@ -1,0 +1,20 @@
+obj-m += dev.o
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+clean:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+
+
+
+app:readtest.o
+	gcc -o app readtest.o
+app.o:readtest.c
+	gcc -c readtets.c
+
+
+
+
+app:writetest.o
+	gcc -o app writetest.o
+app.o:writetest.c
+	gcc -c writetest.c

@@ -1,0 +1,10 @@
+app:writetest.o
+	gcc -o app writetest.o
+app.o:writetest.c
+	gcc -c writetest.c
+
+
+app:readtest.o
+	gcc -o app readtets.o
+app.o:readtest.c
+	gcc -c readtest.c
